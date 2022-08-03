@@ -110,6 +110,30 @@ int64_t lzbench_bzip2_decompress(char *inbuf, size_t insize, char *outbuf, size_
 #endif // BENCH_REMOVE_BZIP2
 
 
+#ifndef BENCH_REMOVE_BZIP3
+extern "C"
+{
+    #include "bzip3/include/common.h"
+    #include "bzip3/include/libbz3.h"
+}
+
+int64_t lzbench_bzip3_compress(char *inbuf, size_t insize, char *outbuf, size_t outsize, size_t, size_t, char*)
+{
+    struct bz3_state * state = bz3_new(6 * 1024 * 1024);
+    int64_t res = bz3_encode_block(state, (uint8_t *)inbuf, (int32_t)insize);
+    bz3_free(state);
+    return res;
+}
+
+int64_t lzbench_bzip3_decompress(char *inbuf, size_t insize, char *outbuf, size_t outsize, size_t, size_t, char*)
+{
+    struct bz3_state * state = bz3_new(6 * 1024 * 1024);
+    return bz3_decode_block(state, (uint8_t *)outbuf, (int32_t)outsize, (int32_t)insize);
+}
+
+#endif // BENCH_REMOVE_BZIP3
+
+
 
 #ifndef BENCH_REMOVE_CRUSH
 #include "crush/crush.hpp"
